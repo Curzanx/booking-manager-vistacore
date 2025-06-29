@@ -16,6 +16,13 @@ import {
   startOfDay,
 } from "date-fns"
 import { Button } from "../ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 
 import { VscArrowRight } from "react-icons/vsc"
 import { VscArrowLeft } from "react-icons/vsc"
@@ -85,28 +92,49 @@ export default function BookingCalendar() {
   }
 
   return (
-    <div className="border max-w-3xl mx-auto shadow-md rounded-t-lg overflow-hidde mt-8">
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-100">
-        <Button onClick={prevMonth} variant="outline">
-          <VscArrowLeft />
-        </Button>
-        <h3>{format(currentMonth, "MMMM yyyy")}</h3>
-        <Button onClick={nextMonth} variant="outline">
-          <VscArrowRight />
-        </Button>
+    <>
+      <div className="border max-w-3xl mx-auto shadow-md rounded-t-lg overflow-hidde mt-8">
+        <div className="flex justify-between items-center px-4 py-2 bg-gray-100">
+          <Button onClick={prevMonth} variant="outline">
+            <VscArrowLeft />
+          </Button>
+          <h3>{format(currentMonth, "MMMM yyyy")}</h3>
+          <Button onClick={nextMonth} variant="outline">
+            <VscArrowRight />
+          </Button>
+        </div>
+
+        {/* Weekday Headers */}
+        <div className="grid grid-cols-7 bg-gray-200 text-center font-bold text-sm">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            <div key={day} className="p-2 border">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar Grid */}
+        {generateCalendar()}
       </div>
 
-      {/* Weekday Headers */}
-      <div className="grid grid-cols-7 bg-gray-200 text-center font-bold text-sm">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="p-2 border">
-            {day}
-          </div>
-        ))}
-      </div>
-
-      {/* Calendar Grid */}
-      {generateCalendar()}
-    </div>
+      <Sheet
+        open={selectedDate != null}
+        onOpenChange={(open) => {
+          if (open == false) {
+            setSelectedDate(null)
+          }
+        }}
+        modal={false}
+      >
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>{selectedDate?.toDateString()}</SheetTitle>
+            <SheetDescription>
+              <span>Please select an available room.</span>
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }
