@@ -4,12 +4,12 @@ import { IoAnalytics } from "react-icons/io5"
 export const sidebarItems = [
   {
     title: "New Booking",
-    url: "#",
+    url: "/new",
     icon: Calendar,
   },
   {
     title: "Bookings",
-    url: "#",
+    url: "/",
     icon: Home,
   },
   {

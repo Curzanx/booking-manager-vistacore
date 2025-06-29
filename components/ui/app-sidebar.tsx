@@ -4,31 +4,38 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { sidebarItems } from "@/models/sidebarMenu"
+import Link from "next/link"
 import { VscSignOut } from "react-icons/vsc"
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon" variant="sidebar">
+      <SidebarHeader>
+        <div className="border-b pb-2 flex justify-between items-center">
+          <span className="group-data-[collapsible=icon]:hidden">
+            Vistacore v2.3
+          </span>
+          <SidebarTrigger />
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xl font-bold border-b rounded-none mb-2">
-            Vistacore v2.3
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -39,11 +46,11 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <div className="flex justify-around items-center py-4 hover:cursor-pointer border-t">
-              <span className="text-md">Username</span>
-              <VscSignOut size={24} />
-            </div>
+          <SidebarMenuItem className="pt-2 border-t rounded-none">
+            <SidebarMenuButton>
+              <VscSignOut />
+              <span>Signout</span>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
