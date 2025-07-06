@@ -11,7 +11,7 @@ import {
 export default function SignIn() {
   return (
     <>
-      <main className="flex justify-center items-center h-svh">
+      <section className="flex justify-center items-center h-svh">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
@@ -23,7 +23,7 @@ export default function SignIn() {
             <SignInForm />
           </CardContent>
         </Card>
-      </main>
+      </section>
     </>
   )
 }

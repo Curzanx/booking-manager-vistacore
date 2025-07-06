@@ -11,6 +11,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { sidebarItems } from "@/models/sidebarMenu"
+import { SignOut } from "@/server/AuthActions"
 import Link from "next/link"
 import { VscSignOut } from "react-icons/vsc"
 
@@ -47,7 +48,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem className="pt-2 border-t rounded-none">
-            <SidebarMenuButton>
+            <SidebarMenuButton onClick={SignOut}>
               <VscSignOut />
               <span>Signout</span>
             </SidebarMenuButton>

@@ -1,6 +1,6 @@
 "use client"
 
-import { signInFormSchema } from "@/models/zodSchema"
+import { SignInFormSchema } from "@/models/zodSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -16,18 +16,28 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
+import { Authenticate } from "@/server/AuthActions"
+import { useSearchParams } from "next/navigation"
 
 export default function SignInForm() {
-  const signInForm = useForm<z.infer<typeof signInFormSchema>>({
-    resolver: zodResolver(signInFormSchema),
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get("callbackUrl") || "/"
+
+  const signInForm = useForm<z.infer<typeof SignInFormSchema>>({
+    resolver: zodResolver(SignInFormSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   })
 
-  function onSubmit(values: z.infer<typeof signInFormSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof SignInFormSchema>) {
+    const formData = new FormData()
+    formData.append("email", values.email)
+    formData.append("password", values.password)
+    formData.append("redirectTo", callbackUrl)
+
+    console.log(await Authenticate(undefined, formData))
   }
 
   return (
