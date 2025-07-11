@@ -5,8 +5,10 @@ import {
   BookingsTable,
   BookingTimeslotsTable,
   RoomsTable,
+  UsersTable,
 } from "@/database/schema"
 import { db } from "@/lib/database"
+import { Booking } from "@/models/interfaces"
 import { eq, and } from "drizzle-orm"
 
 export async function GetBookings(date: Date, roomId: string) {
@@ -67,4 +69,45 @@ export async function CreateBooking(
   } catch (error) {
     return { success: false, error: error }
   }
+}
+
+export async function GetBookingOverviews(): Promise<Booking[]> {
+  const bookings = await db
+    .select({
+      booking_id: BookingsTable.id,
+      purpose: BookingsTable.purpose,
+      date: BookingsTable.date,
+      last_name: UsersTable.last_name,
+      first_name: UsersTable.first_name,
+      room_name: RoomsTable.name,
+      timeslot: BookingTimeslotsTable.timeslot,
+    })
+    .from(BookingsTable)
+    .innerJoin(UsersTable, eq(BookingsTable.user_id, UsersTable.id))
+    .innerJoin(RoomsTable, eq(BookingsTable.room_id, RoomsTable.id))
+    .innerJoin(
+      BookingTimeslotsTable,
+      eq(BookingsTable.id, BookingTimeslotsTable.booking_id)
+    )
+
+  // Group by bookingId
+  const groupedBookings = new Map<string, Booking>()
+
+  for (const booking of bookings) {
+    const key = booking.booking_id
+
+    if (!groupedBookings.has(key)) {
+      groupedBookings.set(key, {
+        creator: `${booking.first_name} ${booking.last_name}`,
+        roomName: booking.room_name,
+        purpose: booking.purpose,
+        date: booking.date,
+        timeSlots: [],
+      })
+    }
+
+    groupedBookings.get(key)?.timeSlots.push(booking.timeslot.slice(0, 5)) // format as HH:mm
+  }
+
+  return Array.from(groupedBookings.values())
 }

@@ -36,7 +36,7 @@ export const BookingsTable = pgTable("bookings", {
   room_id: uuid("room_id")
     .notNull()
     .references(() => RoomsTable.id),
-  date: date("time").notNull(),
+  date: date("date").notNull(),
   purpose: varchar("purpose", { length: 500 }).notNull(),
 })
 

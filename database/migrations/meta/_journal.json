@@ -29,6 +29,13 @@
       "when": 1752192645325,
       "tag": "0003_mushy_guardsmen",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752199844086,
+      "tag": "0004_jazzy_black_queen",
+      "breakpoints": true
     }
   ]
 }

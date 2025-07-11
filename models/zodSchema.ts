@@ -16,7 +16,7 @@ export const TimeslotsFormSchema = z.object({
   purpose: z
     .string()
     .trim()
-    .min(15, { message: "Please add a meaningful purpose." }),
+    .min(10, { message: "Please add a meaningful purpose." }),
   timeslots: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one timeslot.",
   }),
