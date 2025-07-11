@@ -2,10 +2,11 @@
 
 import { UsersTable } from "@/database/schema"
 import { db } from "@/lib/database"
-import { SignUpFormSchema, UserSchema } from "@/models/zodSchema"
+import { SignUpFormSchema } from "@/models/zodSchema"
 import { eq } from "drizzle-orm"
 import z from "zod"
 import bcrypt from "bcrypt"
+import { User } from "@/models/interfaces"
 
 export async function AddUser(
   email: string,
@@ -15,7 +16,7 @@ export async function AddUser(
 ): Promise<z.infer<typeof SignUpFormSchema> | undefined> {
   const hashedPassword = await bcrypt.hash(password, 11)
 
-  const response = await db
+  const [user] = await db
     .insert(UsersTable)
     .values({
       email: email,
@@ -30,24 +31,23 @@ export async function AddUser(
       lastName: UsersTable.last_name,
     })
 
-  return response[0]
+  return user
 }
 
-export async function GetUser(
-  email: string
-): Promise<z.infer<typeof UserSchema> | undefined> {
-  const response = await db
+export async function GetUser(email: string): Promise<User | undefined> {
+  const [user] = await db
     .select()
     .from(UsersTable)
     .where(eq(UsersTable.email, email))
 
-  if (response.length > 0) {
+  if (user) {
     return {
-      firstName: response[0].first_name,
-      lastName: response[0].last_name,
-      password: response[0].password,
-      email: response[0].email,
-      role: response[0].role,
+      id: user.id,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      password: user.password,
+      email: user.email,
+      role: user.role,
     }
   } else {
     return undefined

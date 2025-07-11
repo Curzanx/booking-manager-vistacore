@@ -15,7 +15,7 @@ import {
   isBefore,
   startOfDay,
 } from "date-fns"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
@@ -26,11 +26,23 @@ import {
 
 import { VscArrowRight } from "react-icons/vsc"
 import { VscArrowLeft } from "react-icons/vsc"
+import { GetRooms } from "@/server/BookingActions"
+import { TimeslotsForm } from "@/components/Forms/TimeslotsForm"
 
 export default function BookingCalendar() {
   const today = startOfDay(new Date())
   const [currentMonth, setCurrentMonth] = useState(today)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [rooms, setRooms] = useState<
+    {
+      id: string
+      name: string
+      location: string
+      capacity: number
+      features: string | null
+    }[]
+  >([])
+  const [selectedRoom, setSelectedRoom] = useState<number | null>(null)
 
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(monthStart)
@@ -40,11 +52,14 @@ export default function BookingCalendar() {
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
 
-  function HandleDateClick(date: Date) {
+  async function HandleDateClick(date: Date) {
     setSelectedDate(date)
+
+    const rooms = await GetRooms()
+    setRooms(rooms)
   }
 
-  function generateCalendar() {
+  function GenerateCalendar() {
     const rows = []
     let days = []
     let day = startDate
@@ -54,8 +69,8 @@ export default function BookingCalendar() {
         const dateCopy = day
         const isCurrent = isSameMonth(dateCopy, monthStart)
         const isSelected = selectedDate && isSameDay(dateCopy, selectedDate)
-        const isPast = isBefore(startOfDay(dateCopy), today)
         const isToday = isSameDay(startOfDay(dateCopy), today)
+        const isPast = isBefore(startOfDay(dateCopy), today) || isToday
 
         days.push(
           <button
@@ -114,11 +129,12 @@ export default function BookingCalendar() {
         </div>
 
         {/* Calendar Grid */}
-        {generateCalendar()}
+        {GenerateCalendar()}
       </div>
 
       <Sheet
-        open={selectedDate != null}
+        key="room-sheet"
+        open={selectedDate != null && selectedRoom == null}
         onOpenChange={(open) => {
           if (open == false) {
             setSelectedDate(null)
@@ -133,6 +149,52 @@ export default function BookingCalendar() {
               <span>Please select an available room.</span>
             </SheetDescription>
           </SheetHeader>
+          <div className="flex flex-col gap-4 p-4">
+            {rooms.map((room, index) => {
+              return (
+                <Button
+                  key={room.id}
+                  variant="outline"
+                  className="flex flex-col h-fit"
+                  onClick={() => {
+                    setSelectedRoom(index)
+                  }}
+                >
+                  <p>{room.name}</p>
+                  <p className="text-sm opacity-75">{room.location}</p>
+                </Button>
+              )
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet
+        key="timeslots-sheet"
+        open={selectedDate != null && selectedRoom != null}
+        onOpenChange={(open) => {
+          if (open == false) {
+            setSelectedRoom(null)
+          }
+        }}
+        modal={false}
+      >
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>
+              {selectedDate?.toDateString()} |{" "}
+              {rooms[selectedRoom ?? 0]?.name || ""}
+            </SheetTitle>
+            <SheetDescription>
+              <span>Please select an timeslot.</span>
+            </SheetDescription>
+          </SheetHeader>
+          {selectedDate != null && selectedRoom != null && (
+            <TimeslotsForm
+              selectedDate={selectedDate}
+              selectedRoom={rooms[selectedRoom].id}
+            />
+          )}
         </SheetContent>
       </Sheet>
     </>

@@ -9,3 +9,12 @@ export interface Booking {
   date: string
   timeSlots: TimeSlot[]
 }
+
+export interface User {
+  id: string
+  email: string
+  firstName: string
+  password: string
+  lastName: string
+  role: "admin" | "user"
+}
