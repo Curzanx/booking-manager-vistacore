@@ -1,4 +1,5 @@
 export interface Booking {
+  id: string
   creator: string
   roomName: string
   purpose: string

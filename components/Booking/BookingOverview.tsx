@@ -3,7 +3,7 @@ import { CiClock1 } from "react-icons/ci"
 
 export default function BookingOverview({ booking }: { booking: Booking }) {
   return (
-    <div className="grid grid-cols-2 border w-full max-w-xl rounded-xl p-4">
+    <div className="grid grid-cols-2 border w-full max-w-3xl rounded-xl p-4">
       <div className="flex flex-col gap-2">
         <p className="text-xl font-bold">{booking.roomName}</p>
         <p>{booking.creator}</p>
@@ -17,7 +17,7 @@ export default function BookingOverview({ booking }: { booking: Booking }) {
         <p className="text-lg font-semibold text-center border-b mb-2">
           Time Slots
         </p>
-        <div className="grid grid-cols-2 grid-rows-3 justify-items-center">
+        <div className="grid grid-cols-4 justify-items-center">
           {booking.timeSlots.map((timeSlot) => (
             <p
               key={`${booking.roomName}: + ${timeSlot}`}

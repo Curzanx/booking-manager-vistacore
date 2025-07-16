@@ -1,21 +1,32 @@
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
+"use client"
 
-import { IoIosSearch } from "react-icons/io"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useDebouncedCallback } from "use-debounce"
+import { Input } from "@/components/ui/input"
 
 export default function BookingsSearchBar() {
+  const searchParams = useSearchParams()
+  const { replace } = useRouter()
+  const pathname = usePathname()
+
+  const handleSearch = useDebouncedCallback((term: string) => {
+    const params = new URLSearchParams(searchParams)
+
+    if (term) {
+      params.set("query", term)
+    } else {
+      params.delete("query")
+    }
+
+    replace(`${pathname}?${params.toString()}`)
+  }, 300)
+
   return (
-    <div className="sticky top-0 w-full bg-background flex-col justify-center items-center border py-4 px-4 gap-4">
-      <h1 className="text-center">Bookings</h1>
-      <div className="w-full flex justify-center items-center gap-2">
-        <Input
-          className="rounded-3xl max-w-3xl"
-          placeholder="search bookings..."
-        />
-        <Button variant="outline" className="rounded-3xl">
-          <IoIosSearch className="size-6" />
-        </Button>
-      </div>
-    </div>
+    <Input
+      className="rounded-3xl max-w-3xl"
+      placeholder="search bookings"
+      onChange={(e) => handleSearch(e.target.value)}
+      defaultValue={searchParams.get("query")?.toString()}
+    />
   )
 }

@@ -7,5 +7,5 @@
 
 # Bookings
 
-- Display a summary for each booking (list of summaries)
-- Implement booking search
+- Display a summary for each booking (list of summaries) [Completed]
+- Implement booking search [Completed]

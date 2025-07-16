@@ -9,7 +9,7 @@ import {
 } from "@/database/schema"
 import { db } from "@/lib/database"
 import { Booking } from "@/models/interfaces"
-import { eq, and } from "drizzle-orm"
+import { eq, and, desc, ilike, or } from "drizzle-orm"
 
 export async function GetBookings(date: Date, roomId: string) {
   const bookings = await db
@@ -71,7 +71,7 @@ export async function CreateBooking(
   }
 }
 
-export async function GetBookingOverviews(): Promise<Booking[]> {
+export async function GetBookingOverviews(query: string): Promise<Booking[]> {
   const bookings = await db
     .select({
       booking_id: BookingsTable.id,
@@ -89,6 +89,15 @@ export async function GetBookingOverviews(): Promise<Booking[]> {
       BookingTimeslotsTable,
       eq(BookingsTable.id, BookingTimeslotsTable.booking_id)
     )
+    .orderBy(desc(BookingsTable.date))
+    .where(
+      or(
+        ilike(RoomsTable.name, `%${query}%`),
+        ilike(BookingsTable.purpose, `%${query}%`),
+        ilike(UsersTable.last_name, `%${query}%`),
+        ilike(UsersTable.first_name, `%${query}%`)
+      )
+    )
 
   // Group by bookingId
   const groupedBookings = new Map<string, Booking>()
@@ -98,6 +107,7 @@ export async function GetBookingOverviews(): Promise<Booking[]> {
 
     if (!groupedBookings.has(key)) {
       groupedBookings.set(key, {
+        id: booking.booking_id,
         creator: `${booking.first_name} ${booking.last_name}`,
         roomName: booking.room_name,
         purpose: booking.purpose,
