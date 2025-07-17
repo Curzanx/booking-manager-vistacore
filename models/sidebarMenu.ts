@@ -22,7 +22,7 @@ export const sidebarItems = [
   },
   {
     title: "Analytics",
-    url: "#",
+    url: "/analytics",
     isAdmin: true,
     icon: IoAnalytics,
   },
